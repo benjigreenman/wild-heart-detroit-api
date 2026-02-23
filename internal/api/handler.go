@@ -18,8 +18,10 @@ func NewHandler() *Handler {
 	config := map[string]string{
 		"SPOTIFY_CLIENT_ID":     os.Getenv("SPOTIFY_CLIENT_ID"),
 		"SPOTIFY_CLIENT_SECRET": os.Getenv("SPOTIFY_CLIENT_SECRET"),
+		"SPOTIFY_PODCAST_ID":    os.Getenv("SPOTIFY_PODCAST_ID"),
 		"YOUTUBE_API_KEY":       os.Getenv("YOUTUBE_API_KEY"),
-		"APPLE_API_KEY":         os.Getenv("APPLE_API_KEY"),
+		"YOUTUBE_PLAYLIST_ID":   os.Getenv("YOUTUBE_PLAYLIST_ID"),
+		"APPLE_PODCAST_ID":      os.Getenv("APPLE_PODCAST_ID"),
 	}
 	return NewHandlerWithConfig(config)
 }

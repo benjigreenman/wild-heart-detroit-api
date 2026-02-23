@@ -25,7 +25,8 @@ func NewMediaService(
 	}
 }
 
-func (m *MediaService) GetAllMediaContent(ctx context.Context, limit int) ([]provider.MediaItem, error) {
+func (m *MediaService) GetAllMediaContent(ctx context.Context, limit int) (map[string][]provider.MediaItem, error) {
+	Log("MediaService", "Starting GetAllMediaContent with limit="+fmt.Sprint(limit), nil)
 	var allItems []provider.MediaItem
 	var wg sync.WaitGroup
 	var mu sync.Mutex
@@ -35,13 +36,16 @@ func (m *MediaService) GetAllMediaContent(ctx context.Context, limit int) ([]pro
 
 	go func() {
 		defer wg.Done()
+		Log("MediaService", "Fetching YouTube shows...", nil)
 		items, err := m.youtube.GetShows(ctx, limit)
 		if err != nil {
+			Error("MediaService", "Error fetching YouTube shows", err)
 			mu.Lock()
 			errs = append(errs, err)
 			mu.Unlock()
 			return
 		}
+		Log("MediaService", "Got "+fmt.Sprint(len(items))+" YouTube items", nil)
 		mu.Lock()
 		allItems = append(allItems, items...)
 		mu.Unlock()
@@ -49,13 +53,16 @@ func (m *MediaService) GetAllMediaContent(ctx context.Context, limit int) ([]pro
 
 	go func() {
 		defer wg.Done()
+		Log("MediaService", "Fetching Spotify shows...", nil)
 		items, err := m.spotify.GetShows(ctx, limit)
 		if err != nil {
+			Error("MediaService", "Error fetching Spotify shows", err)
 			mu.Lock()
 			errs = append(errs, err)
 			mu.Unlock()
 			return
 		}
+		Log("MediaService", "Got "+fmt.Sprint(len(items))+" Spotify items", nil)
 		mu.Lock()
 		allItems = append(allItems, items...)
 		mu.Unlock()
@@ -63,13 +70,16 @@ func (m *MediaService) GetAllMediaContent(ctx context.Context, limit int) ([]pro
 
 	go func() {
 		defer wg.Done()
+		Log("MediaService", "Fetching Apple shows...", nil)
 		items, err := m.apple.GetShows(ctx, limit)
 		if err != nil {
+			Error("MediaService", "Error fetching Apple shows", err)
 			mu.Lock()
 			errs = append(errs, err)
 			mu.Unlock()
 			return
 		}
+		Log("MediaService", "Got "+fmt.Sprint(len(items))+" Apple items", nil)
 		mu.Lock()
 		allItems = append(allItems, items...)
 		mu.Unlock()
@@ -78,18 +88,19 @@ func (m *MediaService) GetAllMediaContent(ctx context.Context, limit int) ([]pro
 	wg.Wait()
 
 	if len(errs) > 0 {
-		return nil, errs[0] // or combine errors
+		Error("MediaService", "Returning error", errs[0])
+		return nil, errs[0] // TODO combine errors
 	}
 
-	return allItems, nil
+	Log("MediaService", "Returning "+fmt.Sprint(len(allItems))+" total items", nil)
+	return m.groupMediaItemsByDate(allItems), nil
 }
 
-func GroupMediaByWeekFromCombined(items []provider.MediaItem) map[string][]provider.MediaItem {
-	result := make(map[string][]provider.MediaItem)
+func (m *MediaService) groupMediaItemsByDate(items []provider.MediaItem) map[string][]provider.MediaItem {
+	grouped := make(map[string][]provider.MediaItem)
 	for _, item := range items {
-		year, week := item.ReleaseDate.ISOWeek()
-		key := fmt.Sprintf("%d-%02d", year, week)
-		result[key] = append(result[key], item)
+		date := item.Date
+		grouped[date] = append(grouped[date], item)
 	}
-	return result
+	return grouped
 }

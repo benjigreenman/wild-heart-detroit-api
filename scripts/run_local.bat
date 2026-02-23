@@ -1,12 +1,11 @@
 @echo off
-REM Build and run the local server
-cd /d %~dp0..\cmd\local
+REM 
 
-go build -o local_server.exe
+go build -o /cmd/local/local_server.exe
 if %errorlevel% neq 0 (
     echo Build failed.
     exit /b %errorlevel%
 )
 
 REM Run the server
-local_server.exe
+/cmd/local/local_server.exe

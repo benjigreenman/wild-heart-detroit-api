@@ -26,8 +26,10 @@ go.work.sum
 
 # env file
 .env
-.json
+config.json
+cmd/local/config.json
 
 # Editor/IDE
 # .idea/
 # .vscode/
+__debug*

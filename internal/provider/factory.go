@@ -6,14 +6,16 @@ func NewProvider(kind string, config map[string]string) Provider {
 		return &SpotifyProvider{
 			ClientID:     config["SPOTIFY_CLIENT_ID"],
 			ClientSecret: config["SPOTIFY_CLIENT_SECRET"],
+			PodcastID:    config["SPOTIFY_PODCAST_ID"],
 		}
 	case "youtube":
 		return &YouTubeProvider{
-			APIKey: config["YOUTUBE_API_KEY"],
+			APIKey:    config["YOUTUBE_API_KEY"],
+			PodcastId: config["YOUTUBE_PLAYLIST_ID"],
 		}
 	case "apple":
 		return &AppleProvider{
-			APIKey: config["APPLE_API_KEY"],
+			PodcastID: config["APPLE_PODCAST_ID"],
 		}
 	default:
 		return nil

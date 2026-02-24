@@ -1,0 +1,15 @@
+info:
+  name: media prod
+  type: http
+  seq: 2
+
+http:
+  method: GET
+  url: https://q6hoc28jy8.execute-api.us-east-1.amazonaws.com/media
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

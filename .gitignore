@@ -33,3 +33,4 @@ cmd/local/config.json
 # .idea/
 # .vscode/
 __debug*
+*.zip

@@ -8,7 +8,6 @@ if %errorlevel% neq 0 (
     exit /b %errorlevel%
 )
 
-REM (Optional) Package for AWS Lambda
-REM zip lambda_handler.zip lambda_handler.exe
+tar.exe -a -c -f lambda_handler.zip lambda_handler.exe
 
 echo Lambda handler built as lambda_handler.exe

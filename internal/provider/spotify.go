@@ -31,8 +31,12 @@ type SpotifyPodcastEpisode struct {
 	Description string         `json:"description"`
 	ReleaseDate string         `json:"release_date"`
 	DurationMs  int64          `json:"duration_ms"`
-	ExternalURL string         `json:"external_urls.spotify"`
+	ExternalURL SpotifyURL     `json:"external_urls"`
 	Images      []SpotifyImage `json:"images"`
+}
+
+type SpotifyURL struct {
+	Spotify string `json:"spotify"`
 }
 
 type SpotifyImage struct {
@@ -91,7 +95,7 @@ func (s *SpotifyProvider) mapEpisodes(spotifyEps []SpotifyPodcastEpisode) []Medi
 			Title:       ep.Name,
 			Date:        dateString,
 			Source:      "spotify",
-			Link:        ep.ExternalURL,
+			Link:        ep.ExternalURL.Spotify,
 			Description: ep.Description,
 			Raw:         ep,
 			VideoId:     "",

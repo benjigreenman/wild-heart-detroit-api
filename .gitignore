@@ -34,3 +34,4 @@ cmd/local/config.json
 # .vscode/
 __debug*
 *.zip
+cmd/lambda/bootstrap

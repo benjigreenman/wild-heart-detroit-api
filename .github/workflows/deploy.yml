@@ -16,7 +16,12 @@ jobs:
         with:
           go-version: '1.22'
 
-      - run: build_lambda.bat
+      - run: cd cmd/lambda
+      - run: |
+          $env:GOOS="linux" \
+          $env:GOARCH="amd64" \
+          go build -o bootstrap main.go
+      - run: tar.exe -a -c -f function.zip bootstrap
 
       - uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -26,4 +31,4 @@ jobs:
       - run: |
           aws lambda update-function-code \
             --function-name wild-heart-detroit-api \
-            --zip-file fileb://lambda_handler.zip
+            --zip-file fileb://function.zip

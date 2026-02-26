@@ -16,7 +16,7 @@ jobs:
         with:
           go-version: '1.22'
 
-        - run: |
+      - run: |
           cd cmd/lambda
           GOOS=linux GOARCH=amd64 go build -o bootstrap main.go
           zip function.zip bootstrap

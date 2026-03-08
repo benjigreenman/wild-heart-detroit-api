@@ -100,6 +100,7 @@ func (s *SpotifyProvider) mapEpisodes(spotifyEps []SpotifyPodcastEpisode) []Medi
 			Raw:         ep,
 			VideoId:     "",
 			Duration:    "",
+			ImageUrl:    ep.Images[0].URL,
 		})
 	}
 	return items

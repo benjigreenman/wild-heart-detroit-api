@@ -49,3 +49,5 @@ func handler(ctx context.Context) (events.APIGatewayV2HTTPResponse, error) {
 func main() {
 	lambda.Start(handler)
 }
+
+// TODO how can I set this up so that multiple routes can be handled by the same lambda function?

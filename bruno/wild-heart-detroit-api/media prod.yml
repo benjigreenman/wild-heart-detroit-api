@@ -5,7 +5,7 @@ info:
 
 http:
   method: GET
-  url: https://q6hoc28jy8.execute-api.us-east-1.amazonaws.com/media
+  url: https://q6hoc28jy8.execute-api.us-east-1.amazonaws.com/api/media
   auth: inherit
 
 settings:

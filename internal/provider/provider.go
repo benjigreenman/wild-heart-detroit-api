@@ -13,6 +13,7 @@ type MediaItem struct {
 	Raw         any    `json:"raw,omitempty"`
 	VideoId     string `json:"videoId,omitempty"`
 	Duration    string `json:"duration,omitempty"`
+	ImageUrl    string `json:"imageUrl,omitempty"`
 }
 
 type Provider interface {

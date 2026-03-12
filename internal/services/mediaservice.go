@@ -3,9 +3,16 @@ package services
 import (
 	"context"
 	"fmt"
+	"sort"
 	"sync"
+	"time"
 	"wild-heart-detroit-api/internal/provider"
 )
+
+type MediaGroup struct {
+	Date          string                          `json:"date"`
+	MediaBySource map[string][]provider.MediaItem `json:"mediaBySource"`
+}
 
 type MediaService struct {
 	youtube provider.Provider
@@ -25,7 +32,7 @@ func NewMediaService(
 	}
 }
 
-func (m *MediaService) GetAllMediaContent(ctx context.Context, limit int) (map[string][]provider.MediaItem, error) {
+func (m *MediaService) GetAllMediaContent(ctx context.Context, limit int) ([]MediaGroup, error) {
 	Log("MediaService", "Starting GetAllMediaContent with limit="+fmt.Sprint(limit), nil)
 	var allItems []provider.MediaItem
 	var wg sync.WaitGroup
@@ -96,11 +103,35 @@ func (m *MediaService) GetAllMediaContent(ctx context.Context, limit int) (map[s
 	return m.groupMediaItemsByDate(allItems), nil
 }
 
-func (m *MediaService) groupMediaItemsByDate(items []provider.MediaItem) map[string][]provider.MediaItem {
+func (m *MediaService) groupMediaItemsByDate(items []provider.MediaItem) []MediaGroup {
+	// Group items by date
 	grouped := make(map[string][]provider.MediaItem)
 	for _, item := range items {
-		date := item.Date
-		grouped[date] = append(grouped[date], item)
+		grouped[item.Date] = append(grouped[item.Date], item)
 	}
-	return grouped
+
+	// Convert map to slice
+	groups := make([]MediaGroup, 0, len(grouped))
+	for date, dateItems := range grouped {
+		groups = append(groups, MediaGroup{Date: date, MediaBySource: m.mapMediaItemsBySource(dateItems)})
+	}
+	// Sort groups by date descending
+	sort.Slice(groups, func(i, j int) bool {
+		ti, erri := time.Parse("01/02/2006", groups[i].Date)
+		tj, errj := time.Parse("01/02/2006", groups[j].Date)
+		if erri != nil || errj != nil {
+			return groups[i].Date > groups[j].Date
+		}
+		return ti.After(tj)
+	})
+
+	return groups
+}
+
+func (m *MediaService) mapMediaItemsBySource(items []provider.MediaItem) map[string][]provider.MediaItem {
+	mapped := make(map[string][]provider.MediaItem)
+	for _, item := range items {
+		mapped[item.Source] = append(mapped[item.Source], item)
+	}
+	return mapped
 }

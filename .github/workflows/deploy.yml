@@ -33,4 +33,4 @@ jobs:
       - run: |
           aws lambda update-function-code \
             --function-name wild-heart-detroit-api \
-            --zip-file fileb://function.zip
+            --zip-file fileb://cmd/lambda/function.zip
